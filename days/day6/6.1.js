@@ -57,13 +57,42 @@ function findManhattanDistance(point1, point2) {
   return Math.abs(point2.x - point1.x) + Math.abs(point2.y - point1.y);
 }
 
+function findInfiniteAreas(areas, grid, xMax, yMax) {
+  const top = [...new Set(grid[0].map(g => g.closestPoint))];
+  const bottom = [...new Set(grid[xMax].map(g => g.closestPoint))];
+  let left = [];
+  let right = [];
+
+  for (x = 0; x <= xMax; x++) {
+    left.push(grid[x][0].closestPoint);
+    right.push(grid[x][yMax].closestPoint);
+  }
+
+  left = [...new Set(left)];
+  right = [...new Set(right)];
+
+  pointIds = Object.keys(areas);
+  for (const pointId of pointIds) {
+    if (
+      top.indexOf(parseInt(pointId)) !== -1 ||
+      bottom.indexOf(parseInt(pointId)) !== -1 ||
+      left.indexOf(parseInt(pointId)) !== -1 ||
+      right.indexOf(parseInt(pointId)) !== -1
+    ) {
+      areas[pointId] = 0;
+    }
+  }
+
+  return areas;
+}
+
 function day6_part1(inputs) {
   const points = createPointPairs(inputs);
   const { xMax, yMax } = findGridDimension(points);
+  console.log(xMax, yMax);
   const grid = createGrid(xMax, yMax);
 
-  const areas = {};
-  console.log(points);
+  let areas = {};
   for (const point of points) {
     areas[point.id] = 0;
     for (x = 0; x <= xMax; x++) {
@@ -98,7 +127,17 @@ function day6_part1(inputs) {
     }
   }
 
-  return areas;
+  areas = findInfiniteAreas(areas, grid, xMax, yMax);
+  console.log(areas);
+  let maxArea = 0;
+  for (const pointId of Object.keys(areas)) {
+    if (areas[pointId] > maxArea) {
+      maxArea = areas[pointId];
+    }
+  }
+
+  return maxArea;
 }
 
 console.log(day6_part1(["1, 1", "1, 6", "8, 3", "3, 4", "5, 5", "8, 9"]));
+console.log(day6_part1(readFromFile()));
