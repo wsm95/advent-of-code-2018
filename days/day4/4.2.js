@@ -5,24 +5,6 @@ function readFromFile() {
   return content.split("\n");
 }
 
-function findSleepistGaurd(guards) {
-  let sleepistGuard = {};
-  let sleepistGuardId = 0;
-  let maxSleep = 0;
-  for (const guard of Object.keys(guards)) {
-    if (maxSleep < guards[guard].totalTimeSlept) {
-      sleepistGuard = guards[guard];
-      sleepistGuardId = parseInt(guard);
-      maxSleep = guards[guard].totalTimeSlept;
-    }
-  }
-
-  return {
-    sleepistGuard: sleepistGuard,
-    sleepistGuardId: sleepistGuardId
-  };
-}
-
 function findMostSleptOnMinute(sleepistGuard) {
   let mostSleptMinute = 0;
   let maxSleepOnMinute = 0;
@@ -32,8 +14,10 @@ function findMostSleptOnMinute(sleepistGuard) {
       maxSleepOnMinute = sleepistGuard.minutes[i];
     }
   }
-
-  return mostSleptMinute;
+  return {
+    mostSleptMinute: mostSleptMinute,
+    maxSleepOnMinute: maxSleepOnMinute
+  };
 }
 
 function day4_part1(inputs) {
@@ -47,18 +31,12 @@ function day4_part1(inputs) {
     const currentMinute = parseInt(
       log.substring(log.indexOf(":") + 1, log.indexOf(":") + 3)
     );
-    // console.log(currentMinute);
     if (log.indexOf("#") !== -1) {
       currentGuard = log.split(" ")[3].replace("#", "");
     } else if (log.split(" ")[2].startsWith("f")) {
-      // console.log("guard asleep");
       timeFellAsleep = currentMinute;
     } else {
-      // console.log("gaurd awakes");
-      // console.log(currentMinute);
-      // console.log(timeFellAsleep);
       if (guards[currentGuard] === undefined) {
-        // console.log("new guard");
         guards[currentGuard] = {
           minutes: new Array(60).fill(0),
           totalTimeSlept: 0
@@ -66,17 +44,28 @@ function day4_part1(inputs) {
       }
 
       guards[currentGuard].totalTimeSlept += currentMinute - timeFellAsleep;
-
-      // console.log(guards[currentGuard].totalTimeSlept);
       for (; timeFellAsleep < currentMinute; timeFellAsleep++) {
         guards[currentGuard].minutes[timeFellAsleep]++;
       }
     }
   }
 
-  const { sleepistGuard, sleepistGuardId } = findSleepistGaurd(guards);
-  const mostSleptMinute = findMostSleptOnMinute(sleepistGuard);
-  return sleepistGuardId * mostSleptMinute;
+  let maxMostSleptMinute = 0;
+  let sleepOnMinute = 0;
+  let mostConsistGuardId = 0;
+  for (const guard of Object.keys(guards)) {
+    const { mostSleptMinute, maxSleepOnMinute } = findMostSleptOnMinute(
+      guards[guard]
+    );
+
+    if (sleepOnMinute < maxSleepOnMinute) {
+      maxMostSleptMinute = mostSleptMinute;
+      sleepOnMinute = maxSleepOnMinute;
+      mostConsistGuardId = guard;
+    }
+  }
+
+  return maxMostSleptMinute * mostConsistGuardId;
 }
 
 console.log(
@@ -100,4 +89,4 @@ console.log(
     "[1518-11-04 00:02] Guard #99 begins shift"
   ])
 );
-// console.log(day4_part1(readFromFile()));
+console.log(day4_part1(readFromFile()));
