@@ -2,7 +2,7 @@ function readFromFile() {
   let fs = require("fs");
   let content = fs.readFileSync("day6input.txt", "utf8");
 
-  return content.split("\r\n");
+  return content.split("\n");
 }
 
 function createPointPairs(inputs) {
@@ -44,7 +44,7 @@ function createGrid(xMax, yMax) {
     for (y = 0; y <= yMax; y++) {
       row.push({
         closestPoint: 0,
-        distanceToPoint: 9999
+        distanceToPoint: -1
       });
     }
     grid.push(row);
@@ -113,15 +113,18 @@ function day6_part1(inputs) {
           }
         );
 
-        if (distance < grid[x][y].distanceToPoint) {
+        if (
+          distance < grid[x][y].distanceToPoint ||
+          grid[x][y].distanceToPoint === -1
+        ) {
           areas[point.id] += 1;
           areas[grid[x][y].closestPoint] -= 1;
 
           grid[x][y].closestPoint = point.id;
           grid[x][y].distanceToPoint = distance;
         } else if (grid[x][y].distanceToPoint === distance) {
-          grid[x][y].closestPoint = -1;
           areas[grid[x][y].closestPoint] -= 1;
+          grid[x][y].closestPoint = -1;
         }
       }
     }
