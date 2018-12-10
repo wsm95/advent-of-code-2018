@@ -5,16 +5,15 @@ function readFromFile() {
   return content;
 }
 
+// NOTE: this solution will only work in some cases. If the optimal polymal letter
+// happens to be at the end of the inut, this solution will not work.
 function day5_part2(inputs) {
   let optimalPolymerLength = inputs.split("").length;
-  // z = 91
-  for (let currentLetter = 65; currentLetter < 69; currentLetter++) {
+  for (let currentLetter = 65; currentLetter < 91; currentLetter++) {
     let polymer = inputs.split("");
-    // console.log("CURRENT LETTER " + String.fromCharCode(currentLetter));
 
     let pos = 0;
     while (pos < polymer.length - 1) {
-      // console.log(polymer[pos].toUpperCase());
       if (polymer[pos].toUpperCase().charCodeAt() === currentLetter) {
         polymer.splice(pos, 1);
 
@@ -49,9 +48,6 @@ function day5_part2(inputs) {
     if (polymer.join("").length < optimalPolymerLength) {
       optimalPolymerLength = polymer.join("").length;
     }
-
-    // console.log(polymer.join(""));
-    // console.log(optimalPolymerLength);
   }
 
   return optimalPolymerLength;
