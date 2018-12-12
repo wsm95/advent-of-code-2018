@@ -7,7 +7,7 @@ function readFromFile() {
 
 class Node {
   constructor() {
-    this.value = 0;
+    this.value = [];
     this.children = [];
   }
 }
@@ -41,7 +41,7 @@ function findChildren(
   node.children = children;
 
   for (let i = currentInput; i < currentInput + numberOfMetaData; i++) {
-    node.value += parseInt(inputs[i]);
+    node.value.push(parseInt(inputs[i]));
   }
 
   currentInput += numberOfMetaData;
@@ -54,11 +54,15 @@ function findChildren(
 }
 
 function findMetaDataSum(node) {
-  let sum = node.value;
+  let sum = node.value.reduce((a, b) => {
+    return a + b;
+  });
   let nodesToVisit = [...node.children];
   while (nodesToVisit.length != 0) {
     let currentChild = nodesToVisit.shift();
-    sum += currentChild.value;
+    sum += currentChild.value.reduce((a, b) => {
+      return a + b;
+    });
     nodesToVisit.push(...currentChild.children);
   }
 
@@ -73,9 +77,9 @@ function day8_part1(inputs) {
     inputs,
     2
   );
-
+  console.log(returnNode);
   return findMetaDataSum(returnNode);
 }
 
 console.log(day8_part1("2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2".split(" ")));
-console.log(day8_part1(readFromFile()));
+// console.log(day8_part1(readFromFile()));
