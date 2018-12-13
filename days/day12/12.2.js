@@ -3,7 +3,7 @@ function readFromFile() {
   // let content = fs.readFileSync("day12inputTest.txt", "utf8");
   let content = fs.readFileSync("day12input.txt", "utf8");
 
-  return content.split("\n");
+  return content.split("\r\n");
 }
 
 function createRulesMap() {
@@ -18,6 +18,17 @@ function createRulesMap() {
   }
 
   return rules;
+}
+
+function findSumOfGeneration(generation, startingIndex) {
+  let sum = 0;
+  for (const g in generation) {
+    if (generation[g] === "#") {
+      sum += parseInt(g + startingIndex);
+    }
+  }
+
+  return sum;
 }
 
 function day12_part1(pots) {
@@ -64,7 +75,10 @@ function day12_part1(pots) {
       console.log(i);
       console.log(generation.indexOf("#"));
       console.log(newGeneration.indexOf("#"));
-      break;
+
+      index = 50000000000 - i - 1000 - newGeneration.indexOf("#");
+      console.log(index);
+      return findSumOfGeneration(newGeneration, index);
     }
 
     generations.push([...newGeneration]);
